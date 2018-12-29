@@ -67,7 +67,7 @@ class Text:
    def validInputs(self):
      assert(os.path.isfile(self.xmlFilename))
      assert(os.path.isfile(self.tierGuideFile))
-     assert(self.audioPath == None or os.path.isdir(self.audioPath))
+     #assert(self.audioPath == None or os.path.isdir(self.audioPath))
      if(not self.grammaticalTermsFile == None):
         assert(os.path.isfile(self.grammaticalTermsFile))
         self.grammaticalTerms = open(self.grammaticalTermsFile).read().split("\n")

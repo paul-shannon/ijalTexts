@@ -11,7 +11,7 @@ RUN pip install dash_core_components
 RUN pip install dash_html_components
 RUN pip install yattag
 
-RUN mkdir UPLOADS ijaltexts  tests tests/sampleTexts
+RUN mkdir UPLOADS PROJECTS ijaltexts tests tests/sampleTexts
 COPY ijaltexts/* ijaltexts/
 COPY tests/* tests/
 COPY tests/sampleTexts/* tests/sampleTexts/

@@ -26,7 +26,7 @@ import dash_html_components as html
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, static_folder='static')
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, static_folder='PROJECTS')
 app.title = "IJAL Text Upload"
 
 app.scripts.config.serve_locally = True
@@ -495,10 +495,6 @@ def update_output(n_clicks, soundFileName, eafFileName, projectTitle, projectDir
     soundFileFullPath = soundFileName # os.path.join(UPLOAD_DIRECTORY, soundFileName)
     print("soundFileName: %s" % soundFileName)
     print("eafFileName: %s" % eafFileName)
-    #destinationDirectory = os.path.join(PROJECTS_DIRECTORY, projectTitle)
-    #print("--- about to extract audio files into '%s'" % destinationDirectory)
-    #if(not os.path.exists(destinationDirectory)):
-    #   os.mkdir(destinationDirectory)
     phraseFileCount = extractPhrases(soundFileFullPath, eafFileFullPath, projectDirectory)
     print("after extractPhrases")
     return("%s: %d phrases" % (projectDirectory, phraseFileCount))
@@ -567,12 +563,13 @@ def update_output(n_clicks, soundFileName, eafFileName, projectDirectory,
     if(grammaticalTermsFile == ""):
         grammaticalTermsFile = None
     html = createWebPage(eafFileName, projectDirectory, grammaticalTermsFile, tierGuideFile)
-    absolutePath = os.path.abspath(os.path.join(projectDirectory, "index.html"))
+    absolutePath = os.path.abspath(os.path.join(projectDirectory, "text.html"))
     file = open(absolutePath, "w")
     file.write(html)
     file.close()
     #url = 'file:///%s' % absolutePath
-    url = 'http://0.0.0.0:8050/%s/index.html' % projectDirectory
+
+    url = 'http://0.0.0.0:8050/%s/text.html' % projectDirectory
     webbrowser.open(url, new=2)
     return("wrote file")
 
@@ -584,8 +581,11 @@ def update_output(n_clicks, soundFileName, eafFileName, projectDirectory,
      Input('setTitleTextInput', 'value')]
     )
 def update_output(n_clicks, newTitle):
+    print("title callback")
     if n_clicks is None:
+        print("n_clicks is None")
         return("")
+    print("nClicks: %d, currentTitle: %s" % (n_clicks, newTitle))
     print("--- set project title")
     #projectDirectory = os.path.join(PROJECTS_DIRECTORY, newTitle)
     #print("   creating projectDirectory if needed: %s" % projectDirectory)
@@ -608,33 +608,37 @@ def update_output(projectTitle):
     return(projectDirectory)
 
 #----------------------------------------------------------------------------------------------------
-def extractPhrases(soundFileFullPath, eafFileFullPath, destinationDirectory):
+def extractPhrases(soundFileFullPath, eafFileFullPath, projectDirectory):
 
     print("------- entering extractPhrases")
     print("soundFileFullPath: %s" % soundFileFullPath)
-    print("destinationDirectory: %s" % destinationDirectory)
+    print("projectDirectory: %s" % projectDirectory)
+    audioDirectory = os.path.join(projectDirectory, "audio")
 
-    if not os.path.exists(destinationDirectory):
-        os.makedirs(destinationDirectory)
-    ea = AudioExtractor(soundFileFullPath, eafFileFullPath, destinationDirectory)
+    if not os.path.exists(audioDirectory):
+        os.makedirs(audioDirectory)
+
+    ea = AudioExtractor(soundFileFullPath, eafFileFullPath, audioDirectory)
     assert(ea.validInputs)
     ea.extract(quiet=True)
-    phraseFileCount = len(os.listdir(destinationDirectory))
+    phraseFileCount = len(os.listdir(audioDirectory))
     return(phraseFileCount)
 
 #----------------------------------------------------------------------------------------------------
 def createWebPage(eafFileName, projectDirectory, grammaticalTermsFileName, tierGuideFileName):
 
     print("-------- entering createWebPage")
-    pdb.set_trace()
-    audioPath = "./"
+    # pdb.set_trace()
+    #audioDirectory = os.path.join(projectDirectory, "audio")
+    audioDirectoryRelativePath = "audio"
     print("eafFileName: %s" % eafFileName)
     print("projectDirectory: %s" % projectDirectory)
+    print("audioDirectoryRelativePath: %s" % audioDirectoryRelativePath)
     print("grammaticalTermsFile: %s" % grammaticalTermsFileName)
     print("tierGuideFile: %s" % tierGuideFileName)
 
     text = Text(eafFileName,
-                audioPath,
+                audioDirectoryRelativePath,
                 grammaticalTermsFileName,
                 tierGuideFileName)
 
